@@ -10,15 +10,71 @@
         function calcular() {
             let resposta = dissect(document.getElementById('resposta').value)
             let gabarito = dissect(document.getElementById('gabarito').value)
-            let erro = tests(resposta, gabarito)
-
             let nota = 0
-            for (var i = 0; i < resposta.length; i++) {
-                nota += compare(resposta[i], gabarito[i]) * 6
+            let notas = []
+            document.getElementById("zeradas").innerHTML = ''
+            document.getElementById("notas").innerHTML = ''
+            document.getElementById("categorias").innerHTML = ''
+            //document.getElementById("comuns").innerHTML = ''
+        
+            let error = false
+            let categ = dissect(document.getElementById('caixa_categoria').value)
+            if (categ.length < 2) {
+                alert("Caixa de matérias com menos de dois números.")
+                error = true
             }
 
-            if (erro) { nota = 0 }
-            document.getElementById("nota").innerHTML = ' Nota: ' + nota
+            let nota_categ = [0, 0, 0]
+            let categ_i = 0
+
+            //let comuns = []
+
+            if (!tests(resposta, gabarito) && !error) {
+                for (var i = 0; i < resposta.length; i++) {
+                    let nota_questao = Math.round(compare(resposta[i], gabarito[i]) * 6 * 100) / 100
+
+                    nota += nota_questao
+                    notas.push(nota_questao)
+
+                    if (i == categ[categ_i]) {
+                        categ_i += 1
+                    }
+                    nota_categ[categ_i] += nota_questao
+
+                    /*
+                    let nova = true
+                    for (var i = 0; i < comuns.length; i += 2) {
+                        if (comuns[i] == nota_questao) {
+                            comuns[i+1] += 1
+                            nova = false
+                        }
+                    }
+                    if (nova) {
+                        comuns.push(nota_questao)
+                        comuns.push(1)
+                    }
+                    */
+                }
+                document.getElementById("notas").innerHTML = 'Notas: ' + notas.join(' ')
+
+                document.getElementById("categorias").innerHTML = 
+                'Conhecimentos gerais: ' + nota_categ[0] + 
+                '<br>Língua Portuguesa e Literatura: ' + nota_categ[1] +
+                '<br>Língua Estrangeira: ' + nota_categ[2]
+
+                document.getElementById("zeradas").innerHTML = 'Zeradas: ' +
+                document.getElementById("zeradas").innerHTML
+
+                /*
+                let comuns_str = ''
+                for (var i = 0; i < comuns.length; i += 2) {
+                    comuns_str += 'Nota por questão: ' + comuns[i] + 'Repetições: ' + comuns[i+1]
+                }
+                document.getElementById("comuns").innerHTML = comuns_str
+                */
+
+            }
+            document.getElementById("nota").innerHTML = ' Nota total: ' + nota
         }
 
         function dissect(str) {
@@ -57,6 +113,8 @@
             for (var i = 0; i < res_arr.length; i++) {
                 if (gab_arr[i] == '0' && res_arr[i] == '1') {
                     // Se marcou errada
+                    document.getElementById("zeradas").innerHTML = Number(document.getElementById("zeradas").innerHTML) + 1
+
                     return 0
                 }
 
@@ -75,21 +133,21 @@
             let error = false
 
             if (resposta.length == 0 && gabarito.length == 0) {
-                alert("Preencha os espaços")
+                alert("Preencha os espaços.")
                 error = true
             } else if (resposta.length == 0) {
-                    alert("Preencha o espaço da resposta")
+                    alert("Preencha o espaço da resposta.")
                     error = true
             } else if (gabarito.length == 0) {
-                alert("Preencha o espaço do gabarito")
+                alert("Preencha o espaço do gabarito.")
                 error = true
             } else if (resposta.length != gabarito.length) {
-                alert("Resposta e gabarito tem quantidade diferente de números")
+                alert("Resposta e gabarito tem quantidade diferente de números/alternativas.")
                 error = true
             } else {
                 for (var i = 0; i < resposta.length; i++) {
                     if (resposta[i] > 31 || gabarito[i] > 31) {
-                        alert("Alternativa com numero maior que 31 (gabarito ou resposta)")
+                        alert("Número/Alternativa com valor maior que 31 (gabarito e/ou resposta).")
                         error = true
                     }
                 }
@@ -105,9 +163,8 @@
 
         function pas(i) {
             let texto = [
-                'Não saiu ainda',
-                'Não saiu ainda',
-                'Não saiu ainda',
+                'Não saiu ainda, sai dia 05/12/22 as 15:00 se não me engano',
+                'Não saiu ainda, sai dia 05/12/22 as 15:00 se não me engano',
             ]
             document.getElementById('gabarito').value = texto[i - 1];
         }
@@ -127,14 +184,23 @@
     <p> Gabarito <br> <textarea id="gabarito" rows="4" cols="50"> </textarea> </p>
     <p><button type="button" onclick="limpar('gabarito')">Limpar</button></p>
 
+    <p> Matérias <br> <textarea id="caixa_categoria" rows="4" cols="50"> </textarea> </p>
+    <p><button type="button" onclick="limpar('caixa_categoria')">Limpar</button></p>
+
     <br><br>
-    <p></p><button type="button" onclick="calcular()">Calcular</button><span id="nota"> Nota: 0</span>
+    <p></p><button type="button" onclick="calcular()">Calcular</button><span id="nota"> Nota total: 0</span>
+    <br><span id="notas"></span>
+    <br><br><span id="zeradas"></span>
+    <br><span id="categorias"></span>
+    <!--<br><span id="comuns"></span>-->
     <br><br><br><br>
 
     <p>
         <button type="button" onclick="pas(1)">Gabarito Prov PAS 1 2022</button>
         <button type="button" onclick="pas(2)">Gabarito Prov PAS 2 2022</button>
-        <button type="button" onclick="pas(3)">Gabarito Prov PAS 3 2022</button>
+        <!--<button type="button" onclick="pas(3)">Gabarito Prov PAS 3 2022</button>
+            Adicionar até antes das especificas talvez?
+        -->
     </p>
 
     <h1>Como usar</h1>
@@ -143,16 +209,20 @@
     O que importa é que no texto que você colocar nas caixas,
     os números de dois algarismos estejam com os algarismos um do lado do outro.
 
-    <p>Exemplo: 20, 12, 14 <br> Mal Exemplo: 2 0,   1 2,   1 4   </p>
+    <p>Certo: 20, 12, 14 <br> Errado: 2 0,   1 2,   1 4  <br> Para as alternativas vinte, doze e quatorze. </p>
     <p>Basicamente isso, qualquer outra coisa funciona, pode colocar entre virgula,
         com um zero antes, com espaço entre os números, ou letras entre eles.</p>
 
-    <p>Se você clicar nos botões do gabarito do PAS, o gabarito já preenche pra vc,
+    <p>Se você clicar nos botões do gabarito do PAS, o gabarito já preenche para você,
         só colocar suas alternativas na caixa de resposta, clicar no botão de calcular
         e dá pra descobrir a nota em um instante.</p>
 
     <p>Talvez tenha algum erro no cálculo(no que eu testei deu tudo certo, acho dificil),
         então se quiser ter 100% de certeza o jeito é ver na mão mesmo.<br></p>
+
+    <p><center><h2>Matérias</h2></center> Na caixa de matérias coloque os 2 números das últimas questões de Conhecimentos Gerais e Língua Portuguesa e Literatura, as mesmas regras de cima servem. <br> Exemplo: 25, 35</p>
+
+    <p>Se quiser falar comigo, meu discord: Zac#6868</p>
 
 
 </body>
