@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Somatoria</title>
+    <script>
+
+        function calcular() {
+            let resposta = dissect(document.getElementById('resposta').value)
+            let gabarito = dissect(document.getElementById('gabarito').value)
+            let erro = tests(resposta, gabarito)
+
+            let nota = 0
+            for (var i = 0; i < resposta.length; i++) {
+                nota += compare(resposta[i], gabarito[i]) * 6
+            }
+
+            if (erro) { nota = 0 }
+            document.getElementById("nota").innerHTML = ' Nota: ' + nota
+        }
+
+        function dissect(str) {
+            let array = []
+            let cur_num = ''
+
+            for (var i = 0; i < str.length; i++) {
+                if (isNumeric(str[i])) { // If it's a number
+                    cur_num += str[i]
+                } else if (cur_num != '') {
+                    array.push(Number(cur_num))
+                    cur_num = ''
+                }
+            }
+            if (cur_num != '') {
+                array.push(Number(cur_num))
+            } 
+
+            return array
+        }
+
+        function compare(resposta, gabarito) {
+            let res_arr = resposta.toString(2)
+            let gab_arr = gabarito.toString(2)
+
+            while (res_arr.length < 5) {
+                res_arr = '0' + res_arr
+            }
+            while (gab_arr.length < 5) {
+                gab_arr = '0' + gab_arr
+            }
+
+            let marcou = 0
+            let certas = 0
+
+            for (var i = 0; i < res_arr.length; i++) {
+                if (gab_arr[i] == '0' && res_arr[i] == '1') {
+                    // Se marcou errada
+                    return 0
+                }
+
+                if (gab_arr[i] == '1') {
+                    certas += 1
+                    if (res_arr[i] == '1') {
+                        marcou += 1
+                    }
+                }
+            }
+
+            return marcou/certas
+        }
+
+        function tests(resposta, gabarito) {
+            let error = false
+
+            if (resposta.length == 0 && gabarito.length == 0) {
+                alert("Preencha os espaços")
+                error = true
+            } else if (resposta.length == 0) {
+                    alert("Preencha o espaço da resposta")
+                    error = true
+            } else if (gabarito.length == 0) {
+                alert("Preencha o espaço do gabarito")
+                error = true
+            } else if (resposta.length != gabarito.length) {
+                alert("Resposta e gabarito tem quantidade diferente de números")
+                error = true
+            } else {
+                for (var i = 0; i < resposta.length; i++) {
+                    if (resposta[i] > 31 || gabarito[i] > 31) {
+                        alert("Alternativa com numero maior que 31 (gabarito ou resposta)")
+                        error = true
+                    }
+                }
+            }
+
+            return error
+        }
+
+        function isNumeric(num){
+            num = "" + num; //coerce num to be a string
+            return !isNaN(num) && !isNaN(parseFloat(num));
+        }
+
+        function pas(i) {
+            let texto = [
+                'Não saiu ainda',
+                'Não saiu ainda',
+                'Não saiu ainda',
+            ]
+            document.getElementById('gabarito').value = texto[i - 1];
+        }
+
+        function limpar(id) {
+            document.getElementById(id).value = '';
+        }
+
+    </script>
+
+</head>
+<body>
+    <center>
+    <p> Resposta <br> <textarea id="resposta" rows="4" cols="50"> </textarea> </p>
+    <p><button type="button" onclick="limpar('resposta')">Limpar</button></p>
+
+    <p> Gabarito <br> <textarea id="gabarito" rows="4" cols="50"> </textarea> </p>
+    <p><button type="button" onclick="limpar('gabarito')">Limpar</button></p>
+
+    <p></p><button type="button" onclick="calcular()">Calcular</button><span id="nota"> Nota: 0</span>
+
+
+    <p>
+        <button type="button" onclick="pas(1)">Gabarito Prov PAS 1 2022</button>
+        <button type="button" onclick="pas(2)">Gabarito Prov PAS 2 2022</button>
+        <button type="button" onclick="pas(3)">Gabarito Prov PAS 3 2022</button>
+    </p>
+
+    <h1>Como usar</h1>
+    </center>
+
+    <h3>O que importa é que no texto que você colocar nas caixas, os números de dois algarismos estejam com os algarismos um do lado do outro.
+        <p>Exemplo: 20, 12, 14 <br> Mal Exemplo: 2 0,   1 2,   1 4   </p>
+        <p>Basicamente isso, qualquer outra coisa funciona, pode colocar entre virgula,
+           com um zero antes, com espaço entre os números, ou letras entre eles.</p>
+
+        <p>Se você clicar nos botões do gabarito do PAS, o gabarito já preenche pra vc,
+           só coloca suas alternativas na caixa de resposta, clica no botão de calcular
+           e dá pra descobrir a nota em um instante.</p>
+
+        <p>Talvez ocorra algum erro no calculo(no que eu testei deu tudo certo, acho dificil),
+           então se quiser ter 100% de certeza o jeito é ver na mão mesmo.<br></p>
+    </h3>
+
+</body>
+</html>
