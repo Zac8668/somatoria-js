@@ -18,11 +18,7 @@
             //document.getElementById("comuns").innerHTML = ''
         
             let error = false
-            let categ = dissect(document.getElementById('caixa_categoria').value)
-            if (categ.length < 2) {
-                alert("Caixa de matérias com menos de dois números.")
-                error = true
-            }
+            let categ = [25, 35]
 
             let nota_categ = [0, 0, 0]
             let categ_i = 0
@@ -184,9 +180,6 @@
     <p> Gabarito <br> <textarea id="gabarito" rows="4" cols="50"> </textarea> </p>
     <p><button type="button" onclick="limpar('gabarito')">Limpar</button></p>
 
-    <p> Matérias <br> <textarea id="caixa_categoria" rows="4" cols="50"> </textarea> </p>
-    <p><button type="button" onclick="limpar('caixa_categoria')">Limpar</button></p>
-
     <br><br>
     <p></p><button type="button" onclick="calcular()">Calcular</button><span id="nota"> Nota total: 0</span>
     <br><span id="notas"></span>
@@ -219,9 +212,7 @@
 
     <p>Talvez tenha algum erro no cálculo(no que eu testei deu tudo certo, acho dificil),
         então se quiser ter 100% de certeza o jeito é ver na mão mesmo.<br></p>
-
-    <p><center><h2>Matérias</h2></center> Na caixa de matérias coloque os 2 números das últimas questões de Conhecimentos Gerais e Língua Portuguesa e Literatura, as mesmas regras de cima servem. <br> Exemplo: 25, 35</p>
-
+        
     <p>Se quiser falar comigo, meu discord: Zac#6868</p>
 
 
